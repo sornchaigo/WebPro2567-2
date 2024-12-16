@@ -44,7 +44,7 @@ function last_day_of_month($year, $month, )
     if (in_array($month, [1, 3, 5, 7, 8, 10, 12])) {
         $day = 31;
     } elseif (in_array($month, [4, 6, 9, 11])) {
-        $day = 31;
+        $day = 30;
     } elseif (($year % 400) == 0) {
         $day = 29;
     } elseif (($year % 100) == 0) {
