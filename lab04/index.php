@@ -28,8 +28,16 @@ $classRoomData = [
         10 => "Seminar",
         11 => "Seminar",
     ],
-    "Sun" => ""
+    "Sun" => []
 ];
+if (!empty($_POST['day'])) {
+
+    $day = $_POST['day'];
+    $hour = $_POST['hour'];
+    $subject = $_POST['subject'];
+
+    $classRoomData[ $day ][ $hour ] = $subject;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,6 +107,23 @@ $classRoomData = [
         </tbody>
     </table>
 
+    <form action="" method="POST">
+        <div>
+        <label for="">Day</label>
+        <input type="text" name="day">
+        </div>
+        <div>
+        <label for="">Hour</label>
+        <input type="number" name="hour">
+        </div>
+        <div>
+            <label for="">Subject</label>
+            <input type="text" name="subject">
+        </div>
+        <div>
+            <button type="submit">ยืนยัน</button>
+        </div>
+    </form>
 </body>
 
 </html>
