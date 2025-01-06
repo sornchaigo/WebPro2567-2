@@ -8,5 +8,4 @@ if (
     $price = $_POST["price"];
     addMenu($conn, $name, $price);
 }
-exit();
 header("Location:/lab05");
