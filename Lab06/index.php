@@ -19,6 +19,28 @@ try {
     echo "Database connection error : " . $e->getMessage();
     exit();
 }
+function listSubject($conn)
+{
+    $classRoomData = [
+        "Mon" => [],
+        "Tue" => [],
+        "Wed" => [],
+        "Thu" => [],
+        "Fri" => [],
+    ];
+    $stm = $conn->prepare(
+        "SELECT * FROM `classroom`;"
+    );
+    $stm->execute();
+
+    $rows = $stm->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($rows)) {
+        foreach ($rows as $row) {
+            $classRoomData[$row['day']][$row['start_hour']][] = $row;
+        }
+    }
+    return $classRoomData;
+}
 
 function findSubject($conn, $day, $hour)
 {
@@ -33,20 +55,21 @@ function findSubject($conn, $day, $hour)
         'day' => $day,
         'hour' => $hour
     ]);
-    
+
     $rows = $stm->fetch(PDO::FETCH_ASSOC);
     if ($rows) {
         echo $rows['name'];
     }
 }
-function addSubject($conn, $day, $hour, $subject)
+function addSubject($conn, $day, $start_hour, $hour, $subject)
 {
     $stm = $conn->prepare("INSERT INTO classroom 
-            (`name`, `day`, `hour`) 
-            VALUES (:name, :day, :hour) ");
+            (`name`, `day`, `start_hour`, `hour`) 
+            VALUES (:name, :day, :start_hour, :hour) ");
     $stm->execute([
         'name' => $subject,
         'day' => $day,
+        'start_hour'=> $start_hour,
         'hour' => $hour
     ]);
 }
@@ -67,10 +90,13 @@ if (
 ) {
 
     $day = $_POST['day'];
+    $start_hour = $_POST['start_hour'];
     $hour = $_POST['hour'];
     $subject = $_POST['subject'];
-    addSubject($conn, $day, $hour, $subject);
+    addSubject($conn, $day, $start_hour, $hour, $subject);
 }
+
+$classRoomData = listSubject($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,10 +135,18 @@ if (
         .holiday {
             background-color: crimson !important;
         }
+        button {
+            width: 100%;
+        }
 
         form div label {
-            width: 50px;
+            width: 100px;
             display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 400px;
         }
     </style>
 
@@ -135,14 +169,32 @@ if (
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($days as $day) { ?>
+            <?php foreach ($classRoomData as $day => $subject) { ?>
                 <tr>
                     <th> <?php echo $day ?> </th>
-                    <?php for ($hour = 8; $hour < 17; $hour++) { ?>
-                        <td>
-                            <?php findSubject($conn, $day, $hour) ?>
+                    <?php for ($hour = 8; $hour < 17;) {
+                        if ( !empty($subject[$hour]) ) {
+                            $colspan = $subject[$hour][0]['hour'];
+                        } else {
+                            $colspan = 1;
+                        }
+                        ?>
+                        <td colspan="<?= $colspan ?>">
+                            <?php
+                            //echo !empty($subject[$hour]) ? $subject[$i][0] : "" 
+                            ?>
+                            <?php
+                            if (!empty($subject[$hour])) {
+                                foreach ($subject[$hour] as $s) {
+                                    echo "<a href='subject_detail.php?id=$s[id]'><button>$s[name]</button></a>";
+                                }
+                            }
+
+                            ?>
                         </td>
-                    <?php } ?>
+                        <?php
+                        $hour += $colspan;
+                    } ?>
                 </tr>
             <?php } ?>
         </tbody>
@@ -151,16 +203,20 @@ if (
     <form action="" method="POST">
         <fieldset>
             <div>
+                <label for="">Subject</label>
+                <input type="text" name="subject">
+            </div>
+            <div>
                 <label for="">Day</label>
                 <input type="text" name="day">
             </div>
             <div>
-                <label for="">Hour</label>
-                <input type="number" name="hour">
+                <label for="">Start Hour</label>
+                <input type="number" name="start_hour">
             </div>
             <div>
-                <label for="">Subject</label>
-                <input type="text" name="subject">
+                <label for="">Hour</label>
+                <input type="number" name="hour">
             </div>
             <div>
                 <button type="submit">ยืนยัน</button>

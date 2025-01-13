@@ -40,8 +40,8 @@ function addCustomer($conn, $customer_name, $customer_city)
         $sql = "INSERT INTO customers (`name`, `city`) VALUES (:name, :city)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            "name"=> $customer_name,
-            "city"=> $customer_city,
+            "name" => $customer_name,
+            "city" => $customer_city,
         ]);
     } catch (Exception $e) {
         echo "Add Customer error : " . $e->getMessage();
@@ -67,11 +67,75 @@ function addMenu($conn, $name, $price)
         $sql = "INSERT INTO menus (`menu_name`, `price`) VALUES (:name, :price)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            "name"=> $name,
-            "price"=> $price,
+            "name" => $name,
+            "price" => $price,
         ]);
     } catch (Exception $e) {
         echo "Add Menu error : " . $e->getMessage();
         exit();
     }
+}
+
+
+function getSubject($conn, $id)
+{
+    try {
+        $conn->query("USE classroom;");
+
+        $stm = $conn->prepare(
+            "SELECT * 
+        FROM classroom 
+        WHERE `id` = :id  "
+        );
+        $stm->execute([
+            'id' => $id
+        ]);
+        return $stm->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+
+    }
+    return false;
+}
+
+
+function updateSubject($conn, $id, $subject, $day, $start_hour, $hour)
+{
+    try {
+        $conn->query("USE classroom;");
+
+        $stm = $conn->prepare(
+            "UPDATE classroom
+            SET `name`=:name, `day`=:day, `start_hour`=:start_hour, `hour`=:hour
+            WHERE id=:id "
+        );
+        $stm->execute([
+            'id' => $id,
+            'name' => $subject,
+            'day' => $day,
+            'start_hour' => $start_hour,
+            'hour' => $hour
+        ]);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+    return false;
+}
+
+
+function deleteSubject($conn, $id)
+{
+    try {
+        $conn->query("USE classroom;");
+
+        $stm = $conn->prepare(
+            "DELETE FROM classroom WHERE id=:id "
+        );
+        $stm->execute([
+            'id' => $id
+        ]);
+        return $stm->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+
+    }
+    return false;
 }
