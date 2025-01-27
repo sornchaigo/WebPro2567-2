@@ -5,10 +5,8 @@ if (isset($_POST["username"]) && isset($_POST['password'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $user = login($conn, $username, $password);
-    // if ( $user ) {
-    //     echo "Login success";
-    // }
 }
+
 if (isset($_POST['logout'])) {
     logout();
 }

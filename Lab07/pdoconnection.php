@@ -24,16 +24,29 @@ function login($conn, $username, $password) {
     $sql = "SELECT * 
     FROM user 
     WHERE username=:username 
-    AND `password`=:password ";
+    -- AND `password`=:password 
+    ";
 
     $stm = $conn->prepare( $sql );
     $stm->execute([
         "username"=> $username,
-        "password"=> $password 
+        // "password"=> password_hash($password, PASSWORD_DEFAULT)
     ]);
+    
     $user = $stm->fetch(PDO::FETCH_ASSOC);
+    if (!$user) {
+        echo "User is not exist";
+        return false;
+    }
+
+    $isPasswordCorrect = password_verify($password, $user['password']);
+    if ( !$isPasswordCorrect) {
+        echo "Password is invalid";
+        return false;
+    }
+
     $_SESSION['user'] = $user;
-    return $user;
+        return $user;
 }
 
 function isLogin() {
@@ -47,4 +60,20 @@ function isLogin() {
 
 function logout() {
     unset($_SESSION['user']);
+}
+
+function insertUser($conn, 
+    $username, $password, $first_name, $last_name) {
+
+    $sql = 'INSERT INTO user 
+    (username, first_name, last_name, password)
+    VALUES (?, ?, ?, ?) ';
+    
+    $stm = $conn->prepare( $sql );
+    $stm->execute([
+        $username, 
+        $first_name, 
+        $last_name,
+        password_hash($password, PASSWORD_DEFAULT),
+    ]);
 }
