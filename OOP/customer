@@ -1,0 +1,13 @@
+<?php
+require_once(dirname(__FILE__) . "/database.php");
+
+class Customer extends DataMapper
+{
+    public const table = "customers";
+    public const fields = ['name', 'city'];
+
+}
+
+$new = Customer::find(Customer::table, 1);
+$user = new User($new);
+var_dump($user);
