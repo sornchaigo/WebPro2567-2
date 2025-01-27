@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 try {
     $username = "root";
@@ -24,16 +25,26 @@ function login($conn, $username, $password) {
     FROM user 
     WHERE username=:username 
     AND `password`=:password ";
-    echo $sql;
+
     $stm = $conn->prepare( $sql );
     $stm->execute([
         "username"=> $username,
         "password"=> $password 
     ]);
-    $row = $stm->fetch(PDO::FETCH_ASSOC);
-    echo "<pre>";
-    var_dump($row);
-    echo "</pre>";
-    return $row;
+    $user = $stm->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['user'] = $user;
+    return $user;
 }
 
+function isLogin() {
+    if (isset($_SESSION['user'])) {
+        $user = $_SESSION['user'];
+        $username = $user['username'];
+        return $user;
+    }
+    return false;
+}
+
+function logout() {
+    unset($_SESSION['user']);
+}
