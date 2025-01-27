@@ -32,7 +32,7 @@ function login($conn, $username, $password) {
         "username"=> $username,
         // "password"=> password_hash($password, PASSWORD_DEFAULT)
     ]);
-    
+
     $user = $stm->fetch(PDO::FETCH_ASSOC);
     if (!$user) {
         echo "User is not exist";
@@ -50,7 +50,7 @@ function login($conn, $username, $password) {
 }
 
 function isLogin() {
-    if (isset($_SESSION['user'])) {
+    if (!empty($_SESSION['user'])) {
         $user = $_SESSION['user'];
         $username = $user['username'];
         return $user;
