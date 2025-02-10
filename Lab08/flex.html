@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .wrapper {
+            width: 600px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .wrapper div {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        .wrapper > div {
+            flex: 1 1 150px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div>One</div>
+        <div>Two</div>
+        <div>Three</div>
+        <div>Four</div>
+        <div>Five</div>
+    </div>
+</body>
+
+</html>
