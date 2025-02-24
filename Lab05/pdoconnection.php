@@ -6,9 +6,9 @@ try {
     $host = "localhost";
     $dbname = "restaurant";
 
-    $servername = "mysql:host=$host;dbname=$dbname;charset=utf8";
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
     $conn = new PDO(
-        $servername,
+        $dsn,
         $username,
         $password
     );
