@@ -17,7 +17,7 @@ class MyPDO extends PDO
 class DataMapper
 {
     public static $db;
-
+$is_new
     public function __construct($data)
     {
         foreach ($data as $key => $value) {

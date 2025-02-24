@@ -1,11 +1,11 @@
 <?php
 require_once("database.php");
 
-class Menu extends DataMapper
+class Customer extends DataMapper
 {
-    public const table = "menus";
-    public const pk = "menu_id";
-    public const fields = ['menu_name', 'price'];
+    public const table = "customers";
+    public const pk = "id";
+    public const fields = ['name', 'city'];
 
     public $data = [];
     public $is_new = false;
