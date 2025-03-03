@@ -10,18 +10,23 @@ class Customer extends DataMapper
     public $data = [];
     public $is_new = false;
 
-    public function __construct($data=null, $is_new=false) {
+    public function __construct($data = null, $is_new = false)
+    {
         parent::__construct(self::table, self::pk, self::fields);
         $this->data = $data;
         $this->is_new = $is_new;
-    }
-
-    public function list() {
-        return json_encode(parent::list() );
     }
 }
 
 
 $customer = new Customer();
-if ( isset($_GET['list' ]) )
-    echo $customer->list();
+$method = $_SERVER['REQUEST_METHOD'];
+
+if (isset($_GET['list'])) {
+    echo json_encode($customer->list());
+} else if ($method == 'POST') {
+    // $data = file_get_contents('php://input');
+    // json_decode($data);
+    $data = json_decode(file_get_contents('php://input'), true);
+    $customer->add($data);
+}

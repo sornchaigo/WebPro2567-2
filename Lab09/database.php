@@ -78,7 +78,7 @@ class DataMapper
         return [];
     }
 
-    public function list()
+    public function listJson()
     {
         return self::select($this->table, );
     }

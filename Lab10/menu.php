@@ -10,10 +10,15 @@ class Menu extends DataMapper
     public $data = [];
     public $is_new = false;
 
-    public function __construct($data=null, $is_new=false) {
+    public function __construct($data = null, $is_new = false)
+    {
         parent::__construct(self::table, self::pk, self::fields);
         $this->data = $data;
         $this->is_new = $is_new;
     }
 }
 
+
+$menu = new Menu();
+if (isset($_GET['list']))
+    echo json_encode($menu->list());

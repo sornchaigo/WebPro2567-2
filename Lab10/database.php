@@ -29,9 +29,9 @@ class DataMapper
     public $pk = "";
     public $fields = [];
 
-    public $is_new = false ;
+    public $is_new = false;
     public $data = [];
-    
+
     public function __construct($table, $pk, $fields)
     {
         $this->table = $table;
@@ -117,9 +117,10 @@ class DataMapper
         $stmt = self::$db->prepare($sql);
         $stmt->execute(['id' => $id]);
     }
-    
-    public function save() {
-        if ( $this->is_new ) {
+
+    public function save()
+    {
+        if ($this->is_new) {
             self::add($this->data);
             $this->is_new = false;
         } else {
