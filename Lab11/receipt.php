@@ -19,35 +19,56 @@ class Receipt extends DataMapper
         $this->is_new = $is_new;
     }
 
+    public static function list()
+    {
+        // $customers = Customer::list();
+        // $menus = Menu::list();
+        $receipts = self::select(self::table);
+        return $receipts;
+    }
+
     public static function load($id)
     {
         $data = parent::select(
             self::table,
-            [self::pk => ':id'],
+            [self::pk . "=:id"],
             ['id' => $id]
         );
-        return new self($data[0]);
+        $data[0]['customer'] = self::getCustomer($data[0]['customer_id']);
+        $data[0]['menu'] = self::getMenu($data[0]['menu_id']);
+        $receipts = new self($data[0]);
+        return $receipts;
     }
 
     public function get($id)
     {
-        $data = parent::get($id);
-        return new Receipt($data);
+        return self::load($id);
     }
 
-    public function getMenu()
+    public static function getMenu($menu_id)
     {
         $menu = new Menu();
-        $data = $menu->get($this->data['menu_id']);
+        $data = $menu->get($menu_id);
         if ($data)
             return $data;
     }
-    public function getCustomer()
+    public static function getCustomer($customer_id)
     {
         $customer = new Customer();
-        $data = $customer->get($this->data['customer_id']);
+        $data = $customer->get($customer_id);
         if ($data)
             return $data;
     }
 
 }
+
+if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
+
+    $method = $_SERVER['REQUEST_METHOD'];
+    if (isset($_GET['list'])) {
+        echo json_encode(Receipt::list(), );
+    } else if ($method == 'GET' && !empty($_GET['id'])) {
+        echo json_encode(Receipt::load($_GET['id'])->data);
+    }
+}
+

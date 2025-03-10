@@ -70,7 +70,7 @@ class DataMapper
         // $sql = "SELECT * FROM $this->table WHERE :pk=:id ";
         $data = self::select(
             $this->table,
-            ["$this->pk=:id"],
+            [$this->pk."=:id"],
             ['id' => $id]
         );
         if ($data)
@@ -78,10 +78,10 @@ class DataMapper
         return [];
     }
 
-    public function list()
-    {
-        return self::select($this->table, );
-    }
+    // public function list()
+    // {
+    //     return self::select($this->table, );
+    // }
 
     public function add($data)
     {

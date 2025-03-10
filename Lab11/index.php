@@ -200,6 +200,7 @@
                         <td>${customer.city}</td>
                         <td>
                             <button onclick="editCustomer(${customer.id})">Edit</button>
+                            <button onclick="deleteCustomer(${customer.id}, '${customer.name}')">Delete</button>
                         </td>
                       </tr>`;
         }
@@ -271,7 +272,24 @@
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify(customer_data)
-        });        // method POST
+        });        // method PUT
+        loadCustomer();
+    }
+
+    async function deleteCustomer(id, name) {
+
+        result = confirm(`คุณต้องการลบข้อมูลลูกค้า ${name} หรือไม่`);
+        if ( !result )
+            return;
+        
+        let url = 'customer.php';
+        let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({id: id})
+        });        // method DELETE
         loadCustomer();
     }
 

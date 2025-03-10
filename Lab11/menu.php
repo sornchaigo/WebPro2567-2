@@ -16,20 +16,28 @@ class Menu extends DataMapper
         $this->data = $data;
         $this->is_new = $is_new;
     }
+
+    public static function list()
+    {
+        return self::select(self::table);
+    }
+
 }
 
 
 $menu = new Menu();
 $method = $_SERVER['REQUEST_METHOD'];
-if (isset($_GET['list'])) {
-    echo json_encode($menu->list());
-} else if ($method == 'POST') {
-    // $data = file_get_contents('php://input');
-    // json_decode($data);
-    $data = json_decode(file_get_contents('php://input'), true);
-    $menu->add($data);
-} else if ($method == 'PUT') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $id = $data['id'];
-    $menu->update($id, $data);
+if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
+    if (isset($_GET['list'])) {
+        echo json_encode(Menu::list());
+    } else if ($method == 'POST') {
+        // $data = file_get_contents('php://input');
+        // json_decode($data);
+        $data = json_decode(file_get_contents('php://input'), true);
+        $menu->add($data);
+    } else if ($method == 'PUT') {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $id = $data['id'];
+        $menu->update($id, $data);
+    }
 }
