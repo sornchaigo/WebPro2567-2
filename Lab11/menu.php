@@ -12,9 +12,13 @@ class Menu extends DataMapper
 
     public function __construct($data = null, $is_new = false)
     {
-        parent::__construct(self::table, self::pk, self::fields);
+        parent::__construct();
         $this->data = $data;
         $this->is_new = $is_new;
+    }
+
+    public static function get($data, $table=self::table, $pk=self::pk) {
+        return parent::get($data, self::table, self::pk);
     }
 
     public static function all($table=self::$table)

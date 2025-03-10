@@ -14,9 +14,13 @@ class Receipt extends DataMapper
 
     public function __construct($data = null, $is_new = false)
     {
-        parent::__construct(self::table, self::pk, self::fields);
+        parent::__construct();
         $this->data = $data;
         $this->is_new = $is_new;
+    }
+
+    public static function get($data, $table=self::table, $pk=self::pk) {
+        return parent::get($data, self::table, self::pk);
     }
 
     public static function all($table = self::$table)
@@ -26,33 +30,25 @@ class Receipt extends DataMapper
 
     public static function load($id)
     {
-        $data = parent::select(
-            self::table,
-            [self::pk . "=:id"],
-            ['id' => $id]
-        );
+        $data = self::get($id);
         $data[0]['customer'] = self::getCustomer($data[0]['customer_id']);
         $data[0]['menu'] = self::getMenu($data[0]['menu_id']);
         $receipts = new self($data[0]);
         return $receipts;
     }
 
-    public function get($id)
-    {
-        return self::load($id);
-    }
-
     public static function getMenu($menu_id)
     {
         $menu = new Menu();
-        $data = $menu->get($menu_id);
+        $data = Menu::get($menu_id);
         if ($data)
             return $data;
     }
+    
     public static function getCustomer($customer_id)
     {
         $customer = new Customer();
-        $data = $customer->get($customer_id);
+        $data = Customer::get($customer_id);
         if ($data)
             return $data;
     }

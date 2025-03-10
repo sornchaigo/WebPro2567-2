@@ -55,11 +55,11 @@ class DataMapper
         }
     }
 
-    public function get($id)
+    public static function get($id, $table, $pk)
     {
         $data = self::select(
-            $this->table,
-            [$this->pk . "=:id"],
+            $table,
+            [$pk . "=:id"],
             ['id' => $id]
         );
         if ($data)
