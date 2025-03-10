@@ -25,18 +25,11 @@ class DataMapper
 
     static $db;
 
-    public $table = "";
-    public $pk = "";
-    public $fields = [];
-
     public $is_new = false;
     public $data = [];
 
-    public function __construct($table, $pk, $fields)
+    public function __construct()
     {
-        $this->table = $table;
-        $this->pk = $pk;
-        $this->fields = $fields;
     }
 
     public static function init()
@@ -66,7 +59,7 @@ class DataMapper
     {
         $data = self::select(
             $this->table,
-            [$this->pk."=:id"],
+            [$this->pk . "=:id"],
             ['id' => $id]
         );
         if ($data)
@@ -74,7 +67,7 @@ class DataMapper
         return [];
     }
 
-    public static function list($table)
+    public static function all($table = self::$table)
     {
         return self::select($table);
     }
@@ -113,17 +106,6 @@ class DataMapper
         $sql = "DELETE FROM $table WHERE $pk=:id";
         $stmt = self::$db->prepare($sql);
         $stmt->execute(['id' => $id]);
-    }
-
-    public function save()
-    {
-        if ($this->is_new) {
-            self::add($this->data, $this->table, $this->fields);
-            $this->is_new = false;
-        } else {
-            self::update($this->data[$this->pk], $this->data);
-            $this->is_new = false;
-        }
     }
 }
 

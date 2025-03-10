@@ -17,9 +17,9 @@ class Menu extends DataMapper
         $this->is_new = $is_new;
     }
 
-    public static function list($table='')
+    public static function all($table=self::$table)
     {
-        return parent::select(self::table);
+        return parent::all(self::table);
     }
 
     public static function add($data, $table = '', $fields = '')
@@ -43,7 +43,7 @@ class Menu extends DataMapper
 $method = $_SERVER['REQUEST_METHOD'];
 if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     if (isset($_GET['list'])) {
-        echo json_encode(Menu::list());
+        echo json_encode(Menu::all());
     } else if ($method == 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
         Menu::add($data);

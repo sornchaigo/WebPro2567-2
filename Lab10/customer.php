@@ -23,7 +23,7 @@ $customer = new Customer();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if (isset($_GET['list'])) {
-    echo json_encode($customer->list());
+    echo json_encode($customer->all());
 } else if ($method == 'POST') {
     // $data = file_get_contents('php://input');
     // json_decode($data);

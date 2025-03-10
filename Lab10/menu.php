@@ -21,4 +21,4 @@ class Menu extends DataMapper
 
 $menu = new Menu();
 if (isset($_GET['list']))
-    echo json_encode($menu->list());
+    echo json_encode($menu->all());

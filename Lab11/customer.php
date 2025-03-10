@@ -17,9 +17,9 @@ class Customer extends DataMapper
         $this->is_new = $is_new;
     }
 
-    public static function list($table = '')
+    public static function all($table = self::$table)
     {
-        return parent::select(self::table);
+        return parent::all(self::table);
     }
 
     public static function add($data, $table = '', $fields = '')
@@ -41,7 +41,7 @@ class Customer extends DataMapper
 if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
     $method = $_SERVER['REQUEST_METHOD'];
     if (isset($_GET['list'])) {
-        echo json_encode(Customer::list());
+        echo json_encode(Customer::all());
     } else if ($method == 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
         Customer::add($data);

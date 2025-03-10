@@ -19,12 +19,9 @@ class Receipt extends DataMapper
         $this->is_new = $is_new;
     }
 
-    public static function list()
+    public static function all($table = self::$table)
     {
-        // $customers = Customer::list();
-        // $menus = Menu::list();
-        $receipts = self::select(self::table);
-        return $receipts;
+        return self::select(self::table);
     }
 
     public static function load($id)
@@ -66,7 +63,7 @@ if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
 
     $method = $_SERVER['REQUEST_METHOD'];
     if (isset($_GET['list'])) {
-        echo json_encode(Receipt::list(), );
+        echo json_encode(Receipt::all(), );
     } else if ($method == 'GET' && !empty($_GET['id'])) {
         echo json_encode(Receipt::load($_GET['id'])->data);
     }
