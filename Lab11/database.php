@@ -53,9 +53,6 @@ class DataMapper
     ) {
         $sql = "SELECT * FROM $table_name ";
         if (is_array($condition)) {
-            // $condition = [ 'menu_name like "b%"', 'price<10' ] 
-            // implode( ' AND ', $condition);
-            // 'menu_name like 'b%' AND 'price<10'
             $sql .= " WHERE " . implode(' AND ', $condition);
         }
         $stmt = self::$db->prepare($sql);
@@ -67,7 +64,6 @@ class DataMapper
 
     public function get($id)
     {
-        // $sql = "SELECT * FROM $this->table WHERE :pk=:id ";
         $data = self::select(
             $this->table,
             [$this->pk."=:id"],
@@ -78,46 +74,43 @@ class DataMapper
         return [];
     }
 
-    // public function list()
-    // {
-    //     return self::select($this->table, );
-    // }
-
-    public function add($data)
+    public static function list($table)
     {
-        $sql = "INSERT INTO $this->table (" .
+        return self::select($table);
+    }
+
+    public static function add($data, $table, $fields)
+    {
+        $sql = "INSERT INTO $table (" .
             implode(
                 ',',
-                $this->fields
+                $fields
             ) . ") VALUES (:" .
-            implode(",:", $this->fields)
+            implode(",:", $fields)
             . ") ";
         $stmt = self::$db->prepare($sql);
         $stmt->execute($data);
     }
 
-    public function update($id, $data)
+    public static function update($id, $data, $table, $pk)
     {
-        var_dump($data);
-        // $data = ['menu_name' => 'bread', 'price' => 8];
         unset($data['id']);
-        unset($data[$this->pk]);
+        unset($data[$pk]);
         foreach ($data as $key => $value) {
             $data_key[] = "$key=:$key";
         }
         $data['id'] = $id;
 
-        $sql = "UPDATE $this->table 
+        $sql = "UPDATE $table 
                 SET " . implode(",", $data_key) .
-            " WHERE $this->pk=:id";
-        echo "<br>".$sql;
+            " WHERE $pk=:id";
         $stmt = self::$db->prepare($sql);
         $stmt->execute($data);
     }
 
-    public function delete($id)
+    public static function delete($id, $table, $pk)
     {
-        $sql = "DELETE FROM $this->table WHERE $this->pk=:id";
+        $sql = "DELETE FROM $table WHERE $pk=:id";
         $stmt = self::$db->prepare($sql);
         $stmt->execute(['id' => $id]);
     }
@@ -125,10 +118,11 @@ class DataMapper
     public function save()
     {
         if ($this->is_new) {
-            self::add($this->data);
+            self::add($this->data, $this->table, $this->fields);
             $this->is_new = false;
         } else {
             self::update($this->data[$this->pk], $this->data);
+            $this->is_new = false;
         }
     }
 }

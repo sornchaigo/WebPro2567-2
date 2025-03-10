@@ -324,7 +324,7 @@
         let price = document.querySelector('#price');
         let menu_data = {
             menu_name: menu_name.value,
-            city: price.value,
+            price: price.value,
         }
 
         let url = 'menu.php';

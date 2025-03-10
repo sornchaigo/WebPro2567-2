@@ -16,32 +16,42 @@ class Customer extends DataMapper
         $this->data = $data;
         $this->is_new = $is_new;
     }
-    public static function list()
+
+    public static function list($table = '')
     {
-        return self::select(self::table);
+        return parent::select(self::table);
     }
 
+    public static function add($data, $table = '', $fields = '')
+    {
+        return parent::add($data, self::table, self::fields);
+    }
+
+    public static function update($id, $data, $table = 'id', $fields = '')
+    {
+        return parent::update($id, $data, self::table, self::pk);
+    }
+
+    public static function delete($id, $table = '', $pk = '')
+    {
+        return parent::delete($id, self::table, self::pk);
+    }
 }
 
-
-$customer = new Customer();
-$method = $_SERVER['REQUEST_METHOD'];
-if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME']))
-{
+if (basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
+    $method = $_SERVER['REQUEST_METHOD'];
     if (isset($_GET['list'])) {
         echo json_encode(Customer::list());
     } else if ($method == 'POST') {
-        // $data = file_get_contents('php://input');
-        // json_decode($data);
         $data = json_decode(file_get_contents('php://input'), true);
-        $customer->add($data);
+        Customer::add($data);
     } else if ($method == 'PUT') {
         $data = json_decode(file_get_contents('php://input'), true);
         $id = $data['id'];
-        $customer->update($id, $data);
+        Customer::update($id, $data);
     } else if ($method == 'DELETE') {
         $data = json_decode(file_get_contents('php://input'), true);
         $id = $data['id'];
-        $customer->delete($id);
+        Customer::delete($id);
     }
 }
