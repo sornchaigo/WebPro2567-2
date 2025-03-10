@@ -21,7 +21,7 @@ class Customer extends DataMapper
         return parent::get($data, self::table, self::pk);
     }
 
-    public static function all($table = self::$table)
+    public static function all($table = self::table)
     {
         return parent::all(self::table);
     }

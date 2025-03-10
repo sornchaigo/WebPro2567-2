@@ -67,7 +67,7 @@ class DataMapper
         return [];
     }
 
-    public static function all($table = self::$table)
+    public static function all($table='')
     {
         return self::select($table);
     }
