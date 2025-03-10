@@ -279,16 +279,16 @@
     async function deleteCustomer(id, name) {
 
         result = confirm(`คุณต้องการลบข้อมูลลูกค้า ${name} หรือไม่`);
-        if ( !result )
+        if (!result)
             return;
-        
+
         let url = 'customer.php';
         let response = await fetch(url, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify({id: id})
+            body: JSON.stringify({ id: id })
         });        // method DELETE
         loadCustomer();
     }
@@ -305,7 +305,10 @@
             tbody += `<tr id="menu_${menu.menu_id}"><td>${menu.menu_id}</td>
                             <td>${menu.menu_name}</td>
                             <td>${menu.price}</td>
-                            <td><button onclick="editMenu(${menu.menu_id})">Edit</button></td>
+                            <td>
+                                <button onclick="editMenu(${menu.menu_id})">Edit</button>
+                                <button onclick="deleteMenu(${menu.menu_id}, '${menu.menu_name}')">Delete</button>
+                            </td>
                             </tr>`;
         }
         menu_table.innerHTML = tbody;
@@ -358,7 +361,7 @@
         edit_menu_name.value = cell[1].innerText;
         edit_price.value = cell[2].innerText;
     }
-    
+
     async function sendEditMenu() {
         let edit_menu_id = document.querySelector("#edit_menu_id");
         let edit_menu_name = document.querySelector("#edit_menu_name");
@@ -377,6 +380,23 @@
             },
             body: JSON.stringify(menu_data)
         });        // method POST
+        loadMenu();
+    }
+
+    async function deleteMenu(id, name) {
+
+        result = confirm(`คุณต้องการลบข้อมูลลูกค้า ${name} หรือไม่`);
+        if (!result)
+            return;
+
+        let url = 'menu.php';
+        let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({ id: id })
+        });        // method DELETE
         loadMenu();
     }
 
