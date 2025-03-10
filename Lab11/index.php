@@ -25,7 +25,6 @@
         #page {
             display: grid;
             width: calc(100% - 10px);
-            /* height: 200px; */
             grid-template:
                 [header-left] "head head" 30px [header-right] [main-left] "nav  main" 1fr [main-right] [footer-left] "nav  foot" 30px [footer-right] / 120px 1fr;
         }
@@ -42,7 +41,7 @@
 
         .main {
             grid-area: main;
-            height: calc(100vh - 90px);
+            height: calc(100vh - 80px);
             overflow-y: auto;
         }
 
@@ -50,6 +49,7 @@
             background-color: red;
             grid-area: foot;
         }
+
         .content {
             margin: 15px;
         }
@@ -57,6 +57,7 @@
         .hide {
             display: none;
         }
+
         .show {
             display: block;
             padding: 15px;
@@ -70,7 +71,7 @@
             <a href="#customer_list">
                 <button>Customer</button>
             </a>
-        </div><br>
+        </div>
         <div>
             <a href="#menu_list">
                 <button>menu</button>
@@ -94,7 +95,6 @@
                 </tr>
             </thead>
             <tbody>
-
             </tbody>
         </table>
 
@@ -109,7 +109,7 @@
                 <input type="text" id="customer_city">
             </div>
             <div>
-                <button onclick="addCustomer()">Add</button>
+                <button onclick="addCustomer()">Confirm</button>
             </div>
             <br>
         </div>
@@ -140,14 +140,16 @@
                     <th>id</th>
                     <th>name</th>
                     <th>price</th>
+                    <th width="100">
+                        <button onclick="showAddMenu()">Add</button>
+                    </th>
                 </tr>
             </thead>
             <tbody>
-
             </tbody>
         </table>
 
-        <div>
+        <div id="menu_add" class="hide content">
             <h3>Add Menu</h3>
             <div>
                 <label for="">Name</label>
@@ -158,11 +160,26 @@
                 <input type="number" id="price">
             </div>
             <div>
-                <button onclick="addMenu()">Add</button>
+                <button onclick="addMenu()">Confirm</button>
             </div>
+            <br>
         </div>
-        <br>
-        <hr>
+        <div id="menu_edit" class="hide content">
+            <h3>Edit Menu</h3>
+            <input type="hidden" id="edit_menu_id">
+            <div>
+                <label for="">Name</label>
+                <input type="text" id="edit_menu_name">
+            </div>
+            <div>
+                <label for="">Price</label>
+                <input type="number" id="edit_price">
+            </div>
+            <div>
+                <button onclick="sendEditMenu()">Confirm</button>
+            </div>
+            <br>
+        </div>
     </div>
 </body>
 
@@ -178,18 +195,16 @@
 
         let tbody = '';
         for (let customer of customer_list) {
-            tbody +=  `<tr id="customer_${customer.id}"><td>${customer.id}</td>
-                            <td >${customer.name}</td>
-                            <td>${customer.city}</td>
-                            <td>
-                                <button onclick="editCustomer(${customer.id})">Edit</button>
-                            </td>
-                            </tr>`;
-            // tbody += "<tr><td>" + customer.id + "</td><td>"
-            //     + customer.name + "</td><td>"
-            //     + customer.city + "</td><tr>";
+            tbody += `<tr id="customer_${customer.id}"><td>${customer.id}</td>
+                        <td >${customer.name}</td>
+                        <td>${customer.city}</td>
+                        <td>
+                            <button onclick="editCustomer(${customer.id})">Edit</button>
+                        </td>
+                      </tr>`;
         }
         customer_table.innerHTML = tbody;
+        window.location.href = "#customer_list";
     }
 
     function showAddCustomer() {
@@ -197,7 +212,25 @@
         let customer_edit = document.querySelector("#customer_edit");
         customer_add.classList.remove("hide");
         customer_edit.classList.add("hide");
+    }
 
+    async function addCustomer() {
+        let customer_name = document.querySelector('#customer_name');
+        let customer_city = document.querySelector('#customer_city');
+        let customer_data = {
+            name: customer_name.value,
+            city: customer_city.value,
+        }
+
+        let url = 'customer.php';
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(customer_data)
+        });        // method POST
+        loadCustomer();
     }
 
     async function editCustomer(id) {
@@ -206,12 +239,12 @@
         customer_add.classList.add("hide");
         customer_edit.classList.remove("hide");
 
-        console.log( `Call edit customer_${id}`);
+        console.log(`Call edit customer_${id}`);
         // let row = document.querySelector( `#customer_${id}` );
         // let cell = row.querySelectorAll( "td" );
-        let cell = document.querySelectorAll( `#customer_${id} td` )
-        console.log( cell );
-        
+        let cell = document.querySelectorAll(`#customer_${id} td`)
+        console.log(cell);
+
         let edit_customer_id = document.querySelector("#edit_customer_id");
         let edit_customer_name = document.querySelector("#edit_customer_name");
         let edit_customer_city = document.querySelector("#edit_customer_city");
@@ -240,9 +273,7 @@
             body: JSON.stringify(customer_data)
         });        // method POST
         loadCustomer();
-
     }
-
 
     async function loadMenu() {
         let url = 'menu.php?list';
@@ -253,36 +284,87 @@
 
         let tbody = '';
         for (let menu of menu_list) {
-            tbody += `<tr><td>${menu.menu_id}</td>
+            tbody += `<tr id="menu_${menu.menu_id}"><td>${menu.menu_id}</td>
                             <td>${menu.menu_name}</td>
-                            <td>${menu.price}</td></tr>`;
+                            <td>${menu.price}</td>
+                            <td><button onclick="editMenu(${menu.menu_id})">Edit</button></td>
+                            </tr>`;
         }
         menu_table.innerHTML = tbody;
+        window.location.href = "#menu_list";
     }
 
-    async function addCustomer() {
-        let customer_name = document.querySelector('#customer_name');
-        let customer_city = document.querySelector('#customer_city');
-        let customer_data = {
-            name: customer_name.value,
-            city: customer_city.value,
+    function showAddMenu() {
+        let menu_add = document.querySelector("#menu_add");
+        let menu_edit = document.querySelector("#menu_edit");
+        menu_add.classList.remove("hide");
+        menu_edit.classList.add("hide");
+    }
+
+    async function addMenu() {
+        let menu_name = document.querySelector('#menu_name');
+        let price = document.querySelector('#price');
+        let menu_data = {
+            menu_name: menu_name.value,
+            city: price.value,
         }
 
-        let url = 'customer.php';
+        let url = 'menu.php';
         let response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify(customer_data)
+            body: JSON.stringify(menu_data)
         });        // method POST
-        loadCustomer();
+        loadMenu();
+    }
 
+    async function editMenu(id) {
+        let menu_add = document.querySelector("#menu_add");
+        let menu_edit = document.querySelector("#menu_edit");
+        menu_add.classList.add("hide");
+        menu_edit.classList.remove("hide");
+
+        console.log(`Call edit menu_${id}`);
+        // // let row = document.querySelector( `#customer_${id}` );
+        // // let cell = row.querySelectorAll( "td" );
+        let cell = document.querySelectorAll(`#menu_${id} td`);
+        // console.log(cell);
+
+        let edit_menu_id = document.querySelector("#edit_menu_id");
+        let edit_menu_name = document.querySelector("#edit_menu_name");
+        let edit_price = document.querySelector("#edit_price");
+
+        edit_menu_id.value = id;
+        edit_menu_name.value = cell[1].innerText;
+        edit_price.value = cell[2].innerText;
+    }
+    
+    async function sendEditMenu() {
+        let edit_menu_id = document.querySelector("#edit_menu_id");
+        let edit_menu_name = document.querySelector("#edit_menu_name");
+        let edit_price = document.querySelector("#edit_price");
+        let menu_data = {
+            id: edit_menu_id.value,
+            menu_name: edit_menu_name.value,
+            price: edit_price.value,
+        }
+
+        let url = 'menu.php';
+        let response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(menu_data)
+        });        // method POST
+        loadMenu();
     }
 
     window.addEventListener('load', function () {
-        loadCustomer();
         loadMenu();
+        loadCustomer();
     })
 </script>
 

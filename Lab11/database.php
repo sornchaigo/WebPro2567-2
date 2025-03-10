@@ -100,6 +100,7 @@ class DataMapper
     {
         var_dump($data);
         // $data = ['menu_name' => 'bread', 'price' => 8];
+        unset($data['id']);
         unset($data[$this->pk]);
         foreach ($data as $key => $value) {
             $data_key[] = "$key=:$key";

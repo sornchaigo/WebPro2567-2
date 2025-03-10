@@ -20,5 +20,16 @@ class Menu extends DataMapper
 
 
 $menu = new Menu();
-if (isset($_GET['list']))
+$method = $_SERVER['REQUEST_METHOD'];
+if (isset($_GET['list'])) {
     echo json_encode($menu->list());
+} else if ($method == 'POST') {
+    // $data = file_get_contents('php://input');
+    // json_decode($data);
+    $data = json_decode(file_get_contents('php://input'), true);
+    $menu->add($data);
+} else if ($method == 'PUT') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id'];
+    $menu->update($id, $data);
+}
